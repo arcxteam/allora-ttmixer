@@ -25,7 +25,7 @@
             "inferenceEntrypointName": "api-worker-reputer",
             "loopSeconds": 60,
             "parameters": {
-                "InferenceEndpoint": "http://inference:8011/inference/{Token}",
+                "InferenceEndpoint": "http://inference:8000/inference/{Token}",
                 "Token": "ETH"
             }
         },
@@ -34,7 +34,7 @@
             "inferenceEntrypointName": "api-worker-reputer",
             "loopSeconds": 60,
             "parameters": {
-                "InferenceEndpoint": "http://inference:8011/inference/{Token}",
+                "InferenceEndpoint": "http://inference:8000/inference/{Token}",
                 "Token": "BTC"
             }
         },
@@ -43,7 +43,7 @@
             "inferenceEntrypointName": "api-worker-reputer",
             "loopSeconds": 60,
             "parameters": {
-                "InferenceEndpoint": "http://inference:8011/inference/{Token}",
+                "InferenceEndpoint": "http://inference:8000/inference/{Token}",
                 "Token": "SOL"
             }
         },
@@ -52,7 +52,7 @@
             "inferenceEntrypointName": "api-worker-reputer",
             "loopSeconds": 60,
             "parameters": {
-                "InferenceEndpoint": "http://inference:8011/inference/{Token}",
+                "InferenceEndpoint": "http://inference:8000/inference/{Token}",
                 "Token": "ETH"
             }
         },
@@ -61,7 +61,7 @@
             "inferenceEntrypointName": "api-worker-reputer",
             "loopSeconds": 60,
             "parameters": {
-                "InferenceEndpoint": "http://inference:8011/inference/{Token}",
+                "InferenceEndpoint": "http://inference:8000/inference/{Token}",
                 "Token": "BNB"
             }
         },
@@ -70,7 +70,7 @@
             "inferenceEntrypointName": "api-worker-reputer",
             "loopSeconds": 60,
             "parameters": {
-                "InferenceEndpoint": "http://inference:8011/inference/{Token}",
+                "InferenceEndpoint": "http://inference:8000/inference/{Token}",
                 "Token": "ARB"
             }
         }
