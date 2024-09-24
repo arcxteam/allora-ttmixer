@@ -1,0 +1,78 @@
+{
+    "model": {
+        "model_path": "src/saved_models/tinytimemixer_model.pth",  // Path model terlatih
+        "scaler_path": "src/saved_models/scaler.pkl",  // Path scaler untuk normalisasi data
+        "in_dim": 1,  // Dimensi input untuk TinyTimeMixer
+        "out_dim": 1,  // Dimensi output (harga yang diprediksi)
+        "hidden_dim": 64,  // Jumlah unit tersembunyi dalam TinyTimeMixer
+        "depth": 4,  // Jumlah layer dalam TinyTimeMixer
+        "prediction_time_steps": [10, 20]  // Waktu prediksi dalam menit (10 menit, 20 menit ke depan)
+    },
+    "wallet": {
+        "addressKeyName": "test_name",
+        "addressRestoreMnemonic": "ALLORA_SEED_PHRASE",
+        "alloraHomeDir": "",
+        "gas": "auto",
+        "gasAdjustment": 1.2,
+        "nodeRpc": "https://allora-rpc.testnet.allora.network",
+        "maxRetries": 2,
+        "delay": 2,
+        "submitTx": true
+    },
+    "worker": [
+        {
+            "topicId": 1,
+            "inferenceEntrypointName": "api-worker-reputer",
+            "loopSeconds": 60,
+            "parameters": {
+                "InferenceEndpoint": "http://inference:8011/inference/{Token}",
+                "Token": "ETH"
+            }
+        },
+        {
+            "topicId": 3,
+            "inferenceEntrypointName": "api-worker-reputer",
+            "loopSeconds": 60,
+            "parameters": {
+                "InferenceEndpoint": "http://inference:8011/inference/{Token}",
+                "Token": "BTC"
+            }
+        },
+        {
+            "topicId": 5,
+            "inferenceEntrypointName": "api-worker-reputer",
+            "loopSeconds": 60,
+            "parameters": {
+                "InferenceEndpoint": "http://inference:8011/inference/{Token}",
+                "Token": "SOL"
+            }
+        },
+        {
+            "topicId": 7,
+            "inferenceEntrypointName": "api-worker-reputer",
+            "loopSeconds": 60,
+            "parameters": {
+                "InferenceEndpoint": "http://inference:8011/inference/{Token}",
+                "Token": "ETH"
+            }
+        },
+        {
+            "topicId": 8,
+            "inferenceEntrypointName": "api-worker-reputer",
+            "loopSeconds": 60,
+            "parameters": {
+                "InferenceEndpoint": "http://inference:8011/inference/{Token}",
+                "Token": "BNB"
+            }
+        },
+        {
+            "topicId": 9,
+            "inferenceEntrypointName": "api-worker-reputer",
+            "loopSeconds": 60,
+            "parameters": {
+                "InferenceEndpoint": "http://inference:8011/inference/{Token}",
+                "Token": "ARB"
+            }
+        }
+    ]
+}
