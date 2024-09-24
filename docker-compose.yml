@@ -5,7 +5,7 @@ services:
       context: .  # Pastikan ini menunjuk ke direktori di mana Dockerfile dan kode app.py berada
     command: python -u /app/app.py  # Jalankan app.py yang sudah terkonfigurasi
     ports:
-      - "8011:8011"
+      - "8000:8000"
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8000/inference/ETH || exit 1 && curl -f http://localhost:8000/inference/BTC || exit 1 && curl -f http://localhost:8000/inference/SOL || exit 1 && curl -f http://localhost:8000/inference/BNB || exit 1 && curl -f http://localhost:8000/inference/ARB || exit 1"]
       interval: 10s
