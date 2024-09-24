@@ -10,7 +10,7 @@ WORKDIR /app
 # Copy requirements.txt and install dependencies
 COPY requirements.txt requirements.txt
 RUN pip install --upgrade pip setuptools \
-    && pip install -r requirements.txt
+    && pip install --no-cache-dir -r requirements.txt
 
 # Stage 2: Final environment
 FROM python:3.11-slim
