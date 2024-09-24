@@ -153,13 +153,18 @@ def train_model(token):
     scaler_path = os.path.join(data_base_path, f"{token.lower()}_scaler.pkl")
     with open(scaler_path, 'wb') as f:
         pickle.dump(scaler, f)
-    
+        
+    # Pastikan ada cukup data untuk melakukan pelatihan
+    if len(scaled_data) < 65:  # Karena kita membutuhkan setidaknya 64 data untuk X dan 63 data untuk y
+        print("Not enough data for training, need at least 65 rows.")
+        return
+
     # Inisialisasi model
     model = load_model()
 
-    # Persiapkan data untuk pelatihan, pastikan memiliki dimensi yang sesuai (batch, sequence, features)
-    X = torch.tensor(scaled_data[:-1], dtype=torch.float32).unsqueeze(0).to(device)  # Tambah dimensi batch
-    y = torch.tensor(scaled_data[1:], dtype=torch.float32).unsqueeze(0).to(device)   # Untuk target
+    # Persiapkan data untuk pelatihan, ambil 64 elemen terakhir untuk X dan 63 elemen terakhir untuk y
+    X = torch.tensor(scaled_data[-64:-1], dtype=torch.float32).unsqueeze(0).to(device)  # Mengambil 64 elemen terakhir
+    y = torch.tensor(scaled_data[-63:], dtype=torch.float32).unsqueeze(0).to(device)    # Mengambil 63 elemen terakhir
 
     # Log untuk memastikan ukuran data
     print(f"Shape of input (X): {X.shape}")
