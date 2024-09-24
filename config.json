@@ -1,13 +1,4 @@
 {
-    "model": {
-        "model_path": "saved_models/tinytimemixer_model.pth",  // Path model terlatih
-        "scaler_path": "saved_models/scaler.pkl",  // Path scaler untuk normalisasi data
-        "in_dim": 1,  // Dimensi input untuk TinyTimeMixer
-        "out_dim": 1,  // Dimensi output (harga yang diprediksi)
-        "hidden_dim": 64,  // Jumlah unit tersembunyi dalam TinyTimeMixer
-        "depth": 4,  // Jumlah layer dalam TinyTimeMixer
-        "prediction_time_steps": [10, 20]  // Waktu prediksi dalam menit (10 menit, 20 menit ke depan)
-    },
     "wallet": {
         "addressKeyName": "test_name",
         "addressRestoreMnemonic": "ALLORA_SEED_PHRASE",
