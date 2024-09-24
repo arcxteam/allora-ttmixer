@@ -162,6 +162,9 @@ def train_model(token):
     # Inisialisasi model
     model = load_model()
 
+    # Tambahkan lapisan linear untuk mengubah dimensi output model agar sesuai dengan target
+    linear_layer = torch.nn.Linear(128, 64).to(device)  # Mengubah output menjadi 64 elemen
+
     # Persiapkan data untuk pelatihan, ambil 64 elemen terakhir untuk X dan 64 elemen terakhir untuk y
     X = torch.tensor(scaled_data[-64:], dtype=torch.float32).unsqueeze(0).to(device)  # Mengambil 64 elemen terakhir
     y = torch.tensor(scaled_data[-64:], dtype=torch.float32).unsqueeze(0).to(device)  # Mengambil 64 elemen terakhir
@@ -171,7 +174,7 @@ def train_model(token):
     print(f"Shape of target (y): {y.shape}")
 
     # Optimizer dan loss function
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+    optimizer = torch.optim.Adam(list(model.parameters()) + list(linear_layer.parameters()), lr=0.001)
     loss_fn = torch.nn.MSELoss()
 
     # Pelatihan
@@ -184,11 +187,11 @@ def train_model(token):
         outputs = model(X)
         
         # Reshape outputs agar sesuai dengan target y
-        outputs_reshaped = outputs.last_hidden_state.view(1, -1, 1)
-        y_reshaped = y.view(1, -1, 1)  # Pastikan target juga dalam format yang sesuai
-        
+        outputs_reshaped = outputs.last_hidden_state.view(1, -1)  # Mengubah output menjadi [1, 128]
+        outputs_transformed = linear_layer(outputs_reshaped).view(1, 64, 1)  # Mengubah output menjadi [1, 64, 1]
+
         # Hitung loss
-        loss = loss_fn(outputs_reshaped, y_reshaped)
+        loss = loss_fn(outputs_transformed, y)
         loss.backward()
         optimizer.step()
 
