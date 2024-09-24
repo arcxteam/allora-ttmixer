@@ -163,7 +163,7 @@ def train_model(token):
     model = load_model()
 
     # Persiapkan data untuk pelatihan, ambil 64 elemen terakhir untuk X dan 64 elemen terakhir untuk y
-    X = torch.tensor(scaled_data[-64:-1], dtype=torch.float32).unsqueeze(0).to(device)  # Mengambil 64 elemen terakhir
+    X = torch.tensor(scaled_data[-64:], dtype=torch.float32).unsqueeze(0).to(device)  # Mengambil 64 elemen terakhir
     y = torch.tensor(scaled_data[-64:], dtype=torch.float32).unsqueeze(0).to(device)    # Mengambil 64 elemen terakhir
 
     # Log untuk memastikan ukuran data
