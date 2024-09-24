@@ -162,9 +162,9 @@ def train_model(token):
     # Inisialisasi model
     model = load_model()
 
-    # Persiapkan data untuk pelatihan, ambil 64 elemen terakhir untuk X dan 63 elemen terakhir untuk y
+    # Persiapkan data untuk pelatihan, ambil 64 elemen terakhir untuk X dan 64 elemen terakhir untuk y
     X = torch.tensor(scaled_data[-64:-1], dtype=torch.float32).unsqueeze(0).to(device)  # Mengambil 64 elemen terakhir
-    y = torch.tensor(scaled_data[-63:], dtype=torch.float32).unsqueeze(0).to(device)    # Mengambil 63 elemen terakhir
+    y = torch.tensor(scaled_data[-64:], dtype=torch.float32).unsqueeze(0).to(device)    # Mengambil 64 elemen terakhir
 
     # Log untuk memastikan ukuran data
     print(f"Shape of input (X): {X.shape}")
@@ -180,7 +180,7 @@ def train_model(token):
     for epoch in range(epochs):
         optimizer.zero_grad()
         outputs = model(X)
-        loss = loss_fn(outputs, y)
+        loss = loss_fn(outputs.predictions, y)
         loss.backward()
         optimizer.step()
 
