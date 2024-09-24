@@ -8,16 +8,19 @@ app = Flask(__name__)
 
 # Load config.json
 config_path = os.getenv('CONFIG_PATH', 'config.json')
-with open(config_path, 'r') as config_file:
-    config = json.load(config_file)
-
-# Tokens yang tersedia dari config atau bisa langsung ditetapkan
-TOKENS = ["ETH", "BTC", "BNB", "SOL", "ARB"]
+if os.path.exists(config_path):
+    with open(config_path, 'r') as config_file:
+        config = json.load(config_file)
+    TOKENS = config.get("tokens", ["ETH", "BTC", "BNB", "SOL", "ARB"])  # Load tokens dari config.json
+else:
+    print(f"Config file not found at {config_path}. Using default tokens.")
+    TOKENS = ["ETH", "BTC", "BNB", "SOL", "ARB"]  # Default tokens jika config.json tidak ada
 
 def update_data():
     """Download price data, format data, and train the model."""
     try:
         for token in TOKENS:
+            print(f"Updating data for {token}")
             download_data(token)  # Mengunduh data terbaru dari Binance
             format_data(token)    # Memformat data yang didownload
             train_model(token)    # Melatih model TinyTimeMixer untuk token tersebut
@@ -55,5 +58,10 @@ def update():
 
 if __name__ == "__main__":
     # Update data and models upon starting the app
-    update_data()
+    if update_data():
+        print("Data updated successfully at startup")
+    else:
+        print("Failed to update data at startup")
+
+    # Run the Flask app
     app.run(host="0.0.0.0", port=8000)
