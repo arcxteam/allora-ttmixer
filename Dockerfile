@@ -4,6 +4,9 @@ FROM python:3.11-slim AS project_env
 # Install curl
 RUN apt-get update && apt-get install -y curl
 
+# Instal transformer 
+RUN pip install transformers
+
 # Set the working directory in the container
 WORKDIR /app
 
