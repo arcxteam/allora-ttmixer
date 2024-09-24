@@ -1,7 +1,7 @@
 {
     "model": {
-        "model_path": "src/saved_models/tinytimemixer_model.pth",  // Path model terlatih
-        "scaler_path": "src/saved_models/scaler.pkl",  // Path scaler untuk normalisasi data
+        "model_path": "saved_models/tinytimemixer_model.pth",  // Path model terlatih
+        "scaler_path": "saved_models/scaler.pkl",  // Path scaler untuk normalisasi data
         "in_dim": 1,  // Dimensi input untuk TinyTimeMixer
         "out_dim": 1,  // Dimensi output (harga yang diprediksi)
         "hidden_dim": 64,  // Jumlah unit tersembunyi dalam TinyTimeMixer
