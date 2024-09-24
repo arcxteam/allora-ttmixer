@@ -1,6 +1,6 @@
 services:
   inference:
-    container_name: inference
+    container_name: inference-ttm
     build:
       context: .  # Pastikan ini menunjuk ke direktori di mana Dockerfile dan kode app.py berada
     command: python -u /app/app.py  # Jalankan app.py yang sudah terkonfigurasi
@@ -16,7 +16,7 @@ services:
       - ./inference-data:/app/data  # Sesuaikan lokasi penyimpanan model dan scaler
 
   updater:
-    container_name: updater
+    container_name: updater-ttm
     build:
       context: .  # Pastikan ini menunjuk ke lokasi Dockerfile
     environment:
@@ -33,7 +33,7 @@ services:
         condition: service_healthy
     
   worker:
-    container_name: worker
+    container_name: worker-ttm
     image: alloranetwork/allora-offchain-node:latest
     volumes:
       - ./worker-data:/data
