@@ -6,7 +6,8 @@ import torch
 import random
 import requests
 import retrying
-from tsfm_public.models.tinytimemixer import TinyTimeMixer  # Import TinyTimeMixer
+from modeling_tinytimemixer import TinyTimeMixerModel  # Import TinyTimeMixerModel
+from configuration_tinytimemixer import TinyTimeMixerConfig  # Import TinyTimeMixerConfig
 from sklearn.preprocessing import MinMaxScaler
 import pickle
 
