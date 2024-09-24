@@ -21,28 +21,35 @@ INITIAL_FETCH_SIZE = 100  # Jumlah data yang diambil pertama kali
 # Global variable untuk menyimpan hasil prediksi
 forecast_price = {}
 
-# Konfigurasi TinyTimeMixer
-model_config = {
-    "in_dim": 1,  # Dimensi input (biasanya harga close)
-    "out_dim": 1,  # Prediksi 1 harga ke depan
-    "hidden_dim": 64,  # Jumlah unit tersembunyi
-    "depth": 4  # Jumlah layer
-}
+# Tentukan device untuk GPU atau CPU
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # Load atau inisialisasi TinyTimeMixerModel
 def load_model(model_path=None):
-    model = TinyTimeMixerModel(
-        in_dim=model_config['in_dim'],
-        out_dim=model_config['out_dim'],
-        hidden_dim=model_config['hidden_dim'],
-        depth=model_config['depth']
+    # Membuat konfigurasi TinyTimeMixer
+    config = TinyTimeMixerConfig(
+        context_length=64,        # Panjang konteks input (history length)
+        patch_length=8,           # Panjang patch untuk input sequence
+        num_input_channels=1,     # Jumlah variabel input (univariat)
+        prediction_length=1,      # Panjang prediksi (berapa harga ke depan)
+        d_model=16,               # Ukuran fitur tersembunyi (hidden size)
+        num_layers=3,             # Jumlah lapisan dalam model
+        dropout=0.2,              # Dropout untuk regularisasi
+        mode="common_channel"     # Mode pemrosesan channel
     )
     
+    # Inisialisasi model TinyTimeMixerModel dengan konfigurasi
+    model = TinyTimeMixerModel(config)
+    
+    # Jika model yang dilatih sudah ada, load dari model_path
     if model_path and os.path.exists(model_path):
-        model.load_state_dict(torch.load(model_path))
+        model.load_state_dict(torch.load(model_path, map_location=device))
         print(f"Model loaded from {model_path}")
     else:
         print("Initialized a new TinyTimeMixerModel")
+    
+    # Pindahkan model ke device (GPU atau CPU)
+    model.to(device)
     
     return model
 
@@ -150,9 +157,13 @@ def train_model(token):
     # Inisialisasi model
     model = load_model()
 
-    # Persiapkan data untuk pelatihan
-    X = torch.tensor(scaled_data[:-1], dtype=torch.float32)  # Data input
-    y = torch.tensor(scaled_data[1:], dtype=torch.float32)   # Target (harga berikutnya)
+    # Persiapkan data untuk pelatihan, pastikan memiliki dimensi yang sesuai (batch, sequence, features)
+    X = torch.tensor(scaled_data[:-1], dtype=torch.float32).unsqueeze(0).to(device)  # Tambah dimensi batch
+    y = torch.tensor(scaled_data[1:], dtype=torch.float32).unsqueeze(0).to(device)   # Untuk target
+
+    # Log untuk memastikan ukuran data
+    print(f"Shape of input (X): {X.shape}")
+    print(f"Shape of target (y): {y.shape}")
 
     # Optimizer dan loss function
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
@@ -197,15 +208,15 @@ def predict_price(token):
     # Preprocessing: Scale the input data
     scaled_data = scaler.transform(price_data[-1].reshape(1, -1))
 
-    # Convert to tensor for prediction
-    X = torch.tensor(scaled_data, dtype=torch.float32)
+    # Convert to tensor for prediction, tambahkan dimensi batch
+    X = torch.tensor(scaled_data, dtype=torch.float32).unsqueeze(0).to(device)
 
     # Predict the next price
     with torch.no_grad():
         predicted_scaled = model(X)
     
     # Inverse scale the predicted price
-    predicted_price = scaler.inverse_transform(predicted_scaled.numpy())[0][0]
+    predicted_price = scaler.inverse_transform(predicted_scaled.cpu().numpy())[0][0]
 
     # Forecasted price with small fluctuation
     fluctuation = 0.001 * predicted_price
@@ -222,4 +233,3 @@ def update_data():
 
 if __name__ == "__main__":
     update_data()
-  
