@@ -29,9 +29,9 @@ model_config = {
     "depth": 4  # Jumlah layer
 }
 
-# Load atau inisialisasi TinyTimeMixer model
+# Load atau inisialisasi TinyTimeMixerModel
 def load_model(model_path=None):
-    model = TinyTimeMixer(
+    model = TinyTimeMixerModel(
         in_dim=model_config['in_dim'],
         out_dim=model_config['out_dim'],
         hidden_dim=model_config['hidden_dim'],
@@ -42,7 +42,7 @@ def load_model(model_path=None):
         model.load_state_dict(torch.load(model_path))
         print(f"Model loaded from {model_path}")
     else:
-        print("Initialized a new TinyTimeMixer model")
+        print("Initialized a new TinyTimeMixerModel")
     
     return model
 
