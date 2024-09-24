@@ -56,4 +56,4 @@ def update():
 if __name__ == "__main__":
     # Update data and models upon starting the app
     update_data()
-    app.run(host="0.0.0.0", port=8011)
+    app.run(host="0.0.0.0", port=8000)
