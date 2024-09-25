@@ -1,6 +1,8 @@
 # Stage 1: Build environment
 FROM python:3.11-slim AS project_env
 
+RUN apt-get update && apt-get install -y curl
+
 # Instal transformer 
 RUN pip install transformers
 
