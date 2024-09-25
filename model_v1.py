@@ -136,7 +136,7 @@ def format_data(token):
         print(f"Required columns missing in {file_path}")
         return None
 
-# Fungsi untuk melatih model menggunakan TinyTimeMixer
+# Fungsi untuk melatih model menggunakan TinyTimeMixerModel
 def train_model(token):
     # Load data
     price_data = format_data(token)
@@ -155,7 +155,7 @@ def train_model(token):
         pickle.dump(scaler, f)
         
     # Pastikan ada cukup data untuk melakukan pelatihan
-    if len(scaled_data) < 65:  # Karena kita membutuhkan setidaknya 64 data untuk X dan 63 data untuk y
+    if len(scaled_data) < 65:  # Karena kita membutuhkan setidaknya 64 data untuk X dan 64 data untuk y
         print("Not enough data for training, need at least 65 rows.")
         return
 
@@ -179,7 +179,7 @@ def train_model(token):
 
     # Pelatihan
     model.train()
-    epochs = 50  # Jumlah iterasi pelatihan
+    epochs = 100  # Jumlah iterasi pelatihan
     for epoch in range(epochs):
         optimizer.zero_grad()
         
