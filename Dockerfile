@@ -1,5 +1,5 @@
 # Stage 1: Build environment
-FROM python:3.11-slim AS project_env
+FROM python:3.9-slim AS project_env
 
 RUN apt-get update && apt-get install -y curl
 
@@ -14,7 +14,7 @@ COPY requirements.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Stage 2: Final environment
-FROM python:3.11-slim
+FROM python:3.9-slim
 
 # Set working directory
 WORKDIR /app
