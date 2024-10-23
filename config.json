@@ -4,9 +4,9 @@
         "addressRestoreMnemonic": "ALLORA_SEED_PHRASE",
         "alloraHomeDir": "",
         "gas": "auto",
-        "gasAdjustment": 1.3,
+        "gasAdjustment": 1.5,
         "nodeRpc": "https://allora-rpc.testnet.allora.network",
-        "maxRetries": 2,
+        "maxRetries": 7,
         "delay": 5,
         "submitTx": true
     },
