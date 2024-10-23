@@ -2,8 +2,8 @@ services:
   inference:
     container_name: inference-ttm
     build:
-      context: .  # Pastikan ini menunjuk ke direktori di mana Dockerfile dan kode app.py berada
-    command: python -u /app/app.py  # Jalankan app.py yang sudah terkonfigurasi
+      context: .
+    command: python -u /app/app.py  
     ports:
       - "8000:8000"
     healthcheck:
@@ -13,12 +13,12 @@ services:
       retries: 12
       start_period: 300s
     volumes:
-      - ./inference-data:/app/data  # Sesuaikan lokasi penyimpanan model dan scaler
+      - ./inference-data:/app/data
 
   updater:
     container_name: updater-ttm
     build:
-      context: .  # Pastikan ini menunjuk ke lokasi Dockerfile
+      context: .
     environment:
       - INFERENCE_API_ADDRESS=http://inference:8000
     command: >
