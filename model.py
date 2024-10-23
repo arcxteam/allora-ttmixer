@@ -6,8 +6,8 @@ import torch
 import random
 import requests
 import retrying
-from modeling_tinytimemixer import TinyTimeMixerModel  # Import TinyTimeMixerModel
-from configuration_tinytimemixer import TinyTimeMixerConfig  # Import TinyTimeMixerConfig
+from modeling_tinytimemixer import TinyTimeMixerModel
+from configuration_tinytimemixer import TinyTimeMixerConfig
 from sklearn.preprocessing import MinMaxScaler
 import pickle
 
@@ -15,8 +15,8 @@ import pickle
 from config import data_base_path
 binance_data_path = os.path.join(data_base_path, "binance/futures-klines")
 
-MAX_DATA_SIZE = 100  # Batas maksimum data yang akan disimpan
-INITIAL_FETCH_SIZE = 100  # Jumlah data yang diambil pertama kali
+MAX_DATA_SIZE = 1000  # Batas maksimum data yang akan disimpan
+INITIAL_FETCH_SIZE = 1000  # Jumlah data yang diambil pertama kali
 
 # Global variable untuk menyimpan hasil prediksi
 forecast_price = {}
@@ -41,7 +41,6 @@ def load_model(model_path=None):
     # Inisialisasi model TinyTimeMixerModel dengan konfigurasi
     model = TinyTimeMixerModel(config)
     
-    # Jika model yang dilatih sudah ada, load dari model_path
     if model_path and os.path.exists(model_path):
         model.load_state_dict(torch.load(model_path, map_location=device))
         print(f"Model loaded from {model_path}")
@@ -131,7 +130,7 @@ def format_data(token):
         df = df[columns_to_use]
         df["date"] = pd.to_datetime(df["start_time"], unit='ms')
         df.set_index("date", inplace=True)
-        return df["close"].values.reshape(-1, 1)  # Ambil harga close
+        return df["close"].values.reshape(-1, 1)
     else:
         print(f"Required columns missing in {file_path}")
         return None
@@ -163,8 +162,8 @@ def train_model(token):
     model = load_model()
 
     # Persiapkan data untuk pelatihan, ambil 64 elemen terakhir untuk X dan 64 elemen terakhir untuk y
-    X = torch.tensor(scaled_data[-64:], dtype=torch.float32).unsqueeze(0).to(device)  # Mengambil 64 elemen terakhir
-    y = torch.tensor(scaled_data[-64:], dtype=torch.float32).unsqueeze(0).to(device)    # Mengambil 64 elemen terakhir
+    X = torch.tensor(scaled_data[-64:], dtype=torch.float32).unsqueeze(0).to(device)
+    y = torch.tensor(scaled_data[-64:], dtype=torch.float32).unsqueeze(0).to(device)
 
     # Log untuk memastikan ukuran data
     print(f"Shape of input (X): {X.shape}")
@@ -210,7 +209,7 @@ def predict_price(token):
     model = load_model(model_path)
     model.eval()
 
-    # Preprocessing: Scale the input data
+    # Proses Scale the input data
     scaled_data = scaler.transform(price_data[-1].reshape(1, -1))
 
     # Convert to tensor for prediction, tambahkan dimensi batch
