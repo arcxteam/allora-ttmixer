@@ -25,7 +25,7 @@ from transformers.utils import (
     replace_return_docstrings,
 )
 
-from .configuration_tinytimemixer import TinyTimeMixerConfig
+from configuration_tinytimemixer import TinyTimeMixerConfig
 
 
 logger = logging.get_logger(__name__)
