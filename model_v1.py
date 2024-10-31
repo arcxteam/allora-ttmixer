@@ -6,27 +6,23 @@ import torch
 import random
 import requests
 import retrying
-from modeling_tinytimemixer import TinyTimeMixerModel  # Import TinyTimeMixerModel
-from configuration_tinytimemixer import TinyTimeMixerConfig  # Import TinyTimeMixerConfig
+from modeling_tinytimemixer import TinyTimeMixerModel, TinyTimeMixerForPrediction
+from configuration_tinytimemixer import TinyTimeMixerConfig
 from sklearn.preprocessing import MinMaxScaler
 import pickle
 
-# Path untuk menyimpan data dari Binance dan model
 from config import data_base_path
 binance_data_path = os.path.join(data_base_path, "binance/futures-klines")
 
-MAX_DATA_SIZE = 100  # Batas maksimum data yang akan disimpan
-INITIAL_FETCH_SIZE = 100  # Jumlah data yang diambil pertama kali
+MAX_DATA_SIZE = 1000
+INITIAL_FETCH_SIZE = 1000
 
-# Global variable untuk menyimpan hasil prediksi
 forecast_price = {}
 
 # Tentukan device untuk GPU atau CPU
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-# Load atau inisialisasi TinyTimeMixerModel
-def load_model(model_path=None):
-    # Membuat konfigurasi TinyTimeMixer
+def load_model(model_path=None)
     config = TinyTimeMixerConfig(
         context_length=64,        # Panjang konteks input (history length)
         patch_length=8,           # Panjang patch untuk input sequence
@@ -41,21 +37,17 @@ def load_model(model_path=None):
     # Inisialisasi model TinyTimeMixerModel dengan konfigurasi
     model = TinyTimeMixerModel(config)
     
-    # Jika model yang dilatih sudah ada, load dari model_path
     if model_path and os.path.exists(model_path):
         model.load_state_dict(torch.load(model_path, map_location=device))
         print(f"Model loaded from {model_path}")
     else:
         print("Initialized a new TinyTimeMixerModel")
     
-    # Pindahkan model ke device (GPU atau CPU)
     model.to(device)
-    
     return model
 
-# Fungsi untuk fetch data dari Binance
 @retrying.retry(wait_exponential_multiplier=1000, wait_exponential_max=10000, stop_max_attempt_number=5)
-def fetch_prices(symbol, interval="1m", limit=100, start_time=None, end_time=None):
+def fetch_prices(symbol, interval="1m", limit=1000, start_time=None, end_time=None):
     try:
         base_url = "https://fapi.binance.com"
         endpoint = "/fapi/v1/klines"
@@ -153,44 +145,28 @@ def train_model(token):
     scaler_path = os.path.join(data_base_path, f"{token.lower()}_scaler.pkl")
     with open(scaler_path, 'wb') as f:
         pickle.dump(scaler, f)
-        
-    # Pastikan ada cukup data untuk melakukan pelatihan
+    
     if len(scaled_data) < 65:  # Karena kita membutuhkan setidaknya 64 data untuk X dan 64 data untuk y
         print("Not enough data for training, need at least 65 rows.")
         return
 
-    # Inisialisasi model
     model = load_model()
+    linear_layer = torch.nn.Linear(128, 64).to(device)
+    X = torch.tensor(scaled_data[-64:], dtype=torch.float32).unsqueeze(0).to(device)
+    y = torch.tensor(scaled_data[-64:], dtype=torch.float32).unsqueeze(0).to(device)
 
-    # Tambahkan lapisan linear untuk mengubah dimensi output model agar sesuai dengan target
-    linear_layer = torch.nn.Linear(128, 64).to(device)  # Mengubah output menjadi 64 elemen
-
-    # Persiapkan data untuk pelatihan, ambil 64 elemen terakhir untuk X dan 64 elemen terakhir untuk y
-    X = torch.tensor(scaled_data[-64:], dtype=torch.float32).unsqueeze(0).to(device)  # Mengambil 64 elemen terakhir
-    y = torch.tensor(scaled_data[-64:], dtype=torch.float32).unsqueeze(0).to(device)  # Mengambil 64 elemen terakhir
-
-    # Log untuk memastikan ukuran data
     print(f"Shape of input (X): {X.shape}")
     print(f"Shape of target (y): {y.shape}")
-
-    # Optimizer dan loss function
     optimizer = torch.optim.Adam(list(model.parameters()) + list(linear_layer.parameters()), lr=0.001)
     loss_fn = torch.nn.MSELoss()
 
-    # Pelatihan
     model.train()
-    epochs = 100  # Jumlah iterasi pelatihan
+    epochs = 20
     for epoch in range(epochs):
         optimizer.zero_grad()
-        
-        # Forward pass
         outputs = model(X)
-        
-        # Reshape outputs agar sesuai dengan target y
         outputs_reshaped = outputs.last_hidden_state.view(1, -1)  # Mengubah output menjadi [1, 128]
         outputs_transformed = linear_layer(outputs_reshaped).view(1, 64, 1)  # Mengubah output menjadi [1, 64, 1]
-
-        # Hitung loss
         loss = loss_fn(outputs_transformed, y)
         loss.backward()
         optimizer.step()
@@ -221,17 +197,12 @@ def predict_price(token):
     model = load_model(model_path)
     model.eval()
 
-    # Preprocessing: Scale the input data
     scaled_data = scaler.transform(price_data[-1].reshape(1, -1))
-
-    # Convert to tensor for prediction, tambahkan dimensi batch
     X = torch.tensor(scaled_data, dtype=torch.float32).unsqueeze(0).to(device)
 
-    # Predict the next price
     with torch.no_grad():
         predicted_scaled = model(X)
-    
-    # Inverse scale the predicted price
+
     predicted_price = scaler.inverse_transform(predicted_scaled.cpu().numpy())[0][0]
 
     # Forecasted price with small fluctuation
