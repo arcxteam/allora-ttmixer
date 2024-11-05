@@ -1,13 +1,14 @@
 {
     "wallet": {
-        "addressKeyName": "test_name",
-        "addressRestoreMnemonic": "ALLORA_SEED_PHRASE",
+        "addressKeyName": "bangsat-kau-wkwkwk",
+        "addressRestoreMnemonic": "what-the-fuck",
         "alloraHomeDir": "",
         "gas": "auto",
         "gasAdjustment": 1.5,
-        "nodeRpc": "https://allora-rpc.testnet.allora.network",
+        "nodeRpc": "https://rpc.ankr.com/allora_testnet",
         "maxRetries": 7,
-        "delay": 5,
+        "retryDelay": 3,
+        "accountSequenceRetryDelay": 5,
         "submitTx": true
     },
     "worker": [
