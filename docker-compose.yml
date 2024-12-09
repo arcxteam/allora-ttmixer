@@ -34,7 +34,7 @@ services:
     
   worker:
     container_name: worker-ttm
-    image: alloranetwork/allora-offchain-node:latest
+    image: alloranetwork/allora-offchain-node:v0.7.0
     volumes:
       - ./worker-data:/data
     working_dir: /data
